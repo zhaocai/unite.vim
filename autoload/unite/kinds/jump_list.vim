@@ -133,32 +133,20 @@ function! unite#kinds#jump_list#define() "{{{
 
 
   let kind.action_table.replace = {
-        \ 'description' : 'replace with qfreplace',
+        \ 'description' : 'replace with united replace',
         \ 'is_selectable' : 1,
         \ }
   function! kind.action_table.replace.func(candidates) "{{{
-    if globpath(&runtimepath, 'autoload/qfreplace.vim') == ''
-      echo 'qfreplace.vim is not installed.'
-      return
-    endif
-
-    let qflist = []
-    for candidate in a:candidates
-      if has_key(candidate, 'action__line')
-            \ && has_key(candidate, 'action__text')
-        let filename = s:get_filename(candidate)
-        call add(qflist, {
-              \ 'filename' : filename,
-              \ 'lnum' : candidate.action__line,
-              \ 'text' : candidate.action__text,
-              \ })
-      endif
-    endfor
-
-    if !empty(qflist)
-      call setqflist(qflist)
-      call qfreplace#start('')
-    endif
+    try
+      call ureplace#start([{
+          \ 'name' : 'unite' ,
+          \ 'args' : {'type' : 'candidates', 'candidates' : a:candidates}}, 
+          \])
+    catch /^Vim\%((\a\+)\)\=:E117/ " Function Not Defined
+      call unite#print_error('unite: replace action: united-replace.vim is not installed.')
+    catch /^Vim\%((\a\+)\)\=:/	" catch errors and interrupts
+      call unite#print_error('unite: replace action: ' . v:exception)
+    endtry
   endfunction"}}}
 
   return kind
