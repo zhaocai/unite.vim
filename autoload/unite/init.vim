@@ -591,11 +591,6 @@ function! unite#init#_loaded_sources(sources, context) "{{{
           call unite#util#print_error(
                 \ 'unite.vim: Invalid source name "' .
                 \ source_name . '" is detected.')
-          if source_name ==# 'file_mru' || source_name ==# 'directory_mru'
-            call unite#util#print_error(
-                  \ 'To use MRU features, you must install neomru from ' .
-                  \ 'https://github.com/Shougo/neomru.vim.')
-          endif
           throw 'unite.vim: Invalid source'
         endif
       endif
